@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# These environment variables are sometimes needed by the running daemons
+export USER=root
+export HOME=/root
+
+# Now let's go!
+while :; do
+   echo "Test!"
+   sleep 3
+done

@@ -1,0 +1,33 @@
+#!/bin/bash
+
+show_help() {
+	echo "Usage: readlog [-f] <daemonname>"
+}
+
+while [[ $1 == -* ]]; do
+	case "$1" in
+		-h|--help|-\?) show_help; exit 0;;
+		-v|--verbose) verbose=1; shift 1;;
+		-f|--follow) follow=1; shift 1;;
+		-*) echo "invalid option: $1" 1>&2; show_help; exit 1;;
+	esac
+done
+
+daemonname="$1"
+logdir="/service/${daemonname}/log/main"
+
+if [ ! -d "$logdir" ]; then
+	echo "Logs for '${daemonname}' not found."
+	exit 1
+fi
+
+if [ $follow ]; then
+	COLUMNS=$(tput cols)
+	COLUMNS=${COLUMNS:-80}
+	echo "Truncating output to ${COLUMNS} characters..."
+	tail -f "${logdir}"/current | tai64nlocal | cut -c -${COLUMNS}
+else
+	cat "${logdir}"/* | tai64nlocal | less -R +G
+fi
+
+exit 0
