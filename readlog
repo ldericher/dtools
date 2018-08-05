@@ -22,10 +22,7 @@ if [ ! -d "$logdir" ]; then
 fi
 
 if [ $follow ]; then
-	COLUMNS=$(tput cols)
-	COLUMNS=${COLUMNS:-80}
-	echo "Truncating output to ${COLUMNS} characters..."
-	tail -f "${logdir}"/current | tai64nlocal | cut -c -${COLUMNS}
+	tail -f "${logdir}"/current | tai64nlocal
 else
 	cat "${logdir}"/* | tai64nlocal | less -R +G
 fi

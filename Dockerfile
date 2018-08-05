@@ -4,7 +4,10 @@ LABEL maintainer="jmm@yavook.de"
 
 RUN \
 	# prerequisites \
+	# daemontools \
 	yum install -y gcc make patch &&\
+	# readlog script \
+	yum install -y less &&\
 	\
 	# DJB \
 	mkdir -p /package &&\
@@ -26,8 +29,7 @@ RUN \
 # add /command to PATH
 ENV PATH="/command:${PATH}"
 
-# add readlog script
-RUN yum install -y less
+# add my readlog script
 COPY readlog /command
 
 # start daemontools
