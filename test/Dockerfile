@@ -3,4 +3,5 @@ FROM ldericher/dtools
 LABEL maintainer="jmm@yavook.de"
 
 # this stuff
-COPY . /service/test
+COPY test-normal  /service/test-normal
+COPY test-runwhen /service/test-runwhen
