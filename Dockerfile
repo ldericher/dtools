@@ -18,7 +18,11 @@ RUN	\
 	############## \
 	\
 	# prerequisites \
-	yum install -y gcc make patch &&\
+	yum install -y \
+		gcc \
+		make \
+		patch \
+	&& yum clean all &&\
 	\
 	# get source \
 	cd "${SLASHPACKAGE}" &&\
@@ -53,18 +57,20 @@ RUN	\
 	# compile and install \
 	./configure --disable-ipv6 &&\
 	make -j5 && make install &&\
-	cd && rm -rf "${SLASHPACKAGE}"/skalibs-2.6.4.0
-
-# add skalibs libraries
-ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}":/usr/lib
-
-RUN	\
+	cd && rm -rf "${SLASHPACKAGE}"/skalibs-2.6.4.0 &&\
+	\
+	# add skalibs library path \
+	echo "/usr/lib/skalibs" > /etc/ld.so.conf.d/skalibs-x86_64.conf &&\
+	ldconfig &&\
+	\
 	############## \
 	# runwhen \
 	############## \
 	\
 	# prerequisites \
-	yum install -y bzip2 &&\
+	yum install -y \
+		bzip2 \
+	&& yum clean all &&\
 	\
 	# get source \
 	cd "${SLASHPACKAGE}" &&\
@@ -80,7 +86,9 @@ RUN	\
 	############## \
 	# readlog script needs less \
 	############## \
-	yum install -y less
+	yum install -y \
+		less \
+	&& yum clean all
 
 # add my readlog script
 COPY readlog /command
