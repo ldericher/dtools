@@ -1,5 +1,5 @@
 # METADATA
-FROM centos:7
+FROM alpine:3.8
 LABEL maintainer="jmm@yavook.de"
 
 ENV SLASHPACKAGE="/package"
@@ -18,11 +18,13 @@ RUN	\
 	############## \
 	\
 	# prerequisites \
-	yum install -y \
+	apk add --no-cache \
+		curl \
 		gcc \
+		musl-dev \
 		make \
 		patch \
-	&& yum clean all &&\
+	&&\
 	\
 	# get source \
 	cd "${SLASHPACKAGE}" &&\
@@ -59,18 +61,9 @@ RUN	\
 	make -j5 && make install &&\
 	cd && rm -rf "${SLASHPACKAGE}"/skalibs-2.6.4.0 &&\
 	\
-	# add skalibs library path \
-	echo "/usr/lib/skalibs" > /etc/ld.so.conf.d/skalibs-x86_64.conf &&\
-	ldconfig &&\
-	\
 	############## \
 	# runwhen \
 	############## \
-	\
-	# prerequisites \
-	yum install -y \
-		bzip2 \
-	&& yum clean all &&\
 	\
 	# get source \
 	cd "${SLASHPACKAGE}" &&\
@@ -81,14 +74,6 @@ RUN	\
 	# compile and install \
 	./package/install &&\
 	cd && rm -rf "${SLASHPACKAGE}"/admin/runwhen-2015.02.24/compile
-
-RUN	\
-	############## \
-	# readlog script needs less \
-	############## \
-	yum install -y \
-		less \
-	&& yum clean all
 
 # add my readlog script
 COPY readlog /command

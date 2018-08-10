@@ -1,5 +1,5 @@
 # METADATA
-FROM ldericher/dtools
+FROM ldericher/dtools:alpine
 LABEL maintainer="jmm@yavook.de"
 
 # this stuff
