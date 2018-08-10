@@ -1,5 +1,5 @@
 # METADATA
-FROM ldericher/dtools:latest
+FROM ldericher/dtools:centos
 LABEL maintainer="jmm@yavook.de"
 
 # this stuff
