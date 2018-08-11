@@ -21,8 +21,8 @@ RUN	\
 	apk add --no-cache \
 		curl \
 		gcc \
-		musl-dev \
 		make \
+		musl-dev \
 		patch \
 	&&\
 	\
@@ -37,7 +37,15 @@ RUN	\
 	 | patch -Np1 &&\
 	# compile and install \
 	./package/install &&\
-	cd && rm -rf "${SLASHPACKAGE}"/admin/daemontools-0.76/compile
+	cd && rm -rf "${SLASHPACKAGE}"/admin/daemontools-0.76/compile &&\
+	\
+	# prerequisites \
+	apk del --no-cache \
+		curl \
+		gcc \
+		make \
+		musl-dev \
+		patch
 
 # add /command to PATH
 ENV PATH=/command:"${PATH}"
@@ -49,6 +57,14 @@ RUN	\
 	############## \
 	# skalibs (for runwhen) \
 	############## \
+	\
+	# prerequisites \
+	apk add --no-cache \
+		curl \
+		gcc \
+		make \
+		musl-dev \
+	&&\
 	\
 	# get source \
 	cd "${SLASHPACKAGE}" &&\
@@ -73,7 +89,14 @@ RUN	\
 	\
 	# compile and install \
 	./package/install &&\
-	cd && rm -rf "${SLASHPACKAGE}"/admin/runwhen-2015.02.24/compile
+	cd && rm -rf "${SLASHPACKAGE}"/admin/runwhen-2015.02.24/compile &&\
+	\
+	# prerequisites \
+	apk del --no-cache \
+		curl \
+		gcc \
+		make \
+		musl-dev
 
 # add my readlog script
 COPY readlog /command
