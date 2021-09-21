@@ -7,8 +7,7 @@ steps:
   image: plugins/docker
   settings:
     repo: ldericher/dtools
-    tags:
-      - edge
+    auto_tag: true
     username:
       from_secret: DOCKER_USERNAME
     password:
