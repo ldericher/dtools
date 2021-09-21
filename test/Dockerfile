@@ -1,6 +1,5 @@
 # METADATA
-FROM ldericher/dtools:centos
-LABEL maintainer="jmm@yavook.de"
+FROM ldericher/dtools:latest
 
 # this stuff
 COPY test-normal  /service/test-normal

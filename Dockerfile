@@ -1,41 +1,47 @@
 # METADATA
-FROM centos:7
+FROM alpine:3.13
 LABEL maintainer="jmm@yavook.de"
 
-ENV SLASHPACKAGE="/package"
+RUN	set -ex; \
+    ############## 
+    # slashpackage 
+    ############## 
+    \
+    mkdir -p /usr/local/package; \
+    ln -s /usr/local/package /; \
+    chmod +t /package/.;
 
-RUN	\
-	############## \
-	# slashpackage \
-	############## \
-	\
-	mkdir -p "${SLASHPACKAGE}" &&\
-	chmod 1755 "${SLASHPACKAGE}"
+ARG DAEMONTOOLS_VERSION=0.76
 
-RUN	\
-	############## \
-	# daemontools \
-	############## \
-	\
-	# prerequisites \
-	yum install -y \
-		gcc \
-		make \
-		patch \
-	&& yum clean all &&\
-	\
-	# get source \
-	cd "${SLASHPACKAGE}" &&\
-	curl -L https://cr.yp.to/daemontools/daemontools-0.76.tar.gz \
-	 | tar -xzp &&\
-	cd "${SLASHPACKAGE}"/admin/daemontools-0.76 &&\
-	\
-	# apply errno patch \
-	curl -L http://www.qmail.org/moni.csi.hu/pub/glibc-2.3.1/daemontools-0.76.errno.patch \
-	 | patch -Np1 &&\
-	# compile and install \
-	./package/install &&\
-	cd && rm -rf "${SLASHPACKAGE}"/admin/daemontools-0.76/compile
+RUN	set -ex; \
+    #############
+    # daemontools 
+    #############
+    \
+    # prerequisites
+    apk --no-cache --virtual .dt-deps add \
+    curl \
+    gcc \
+    make \
+    musl-dev \
+    patch \
+    ; \
+    \
+    # get source 
+    cd /package; \
+    curl -L https://cr.yp.to/daemontools/daemontools-${DAEMONTOOLS_VERSION}.tar.gz \
+    | tar -xzp; \
+    cd admin/daemontools-${DAEMONTOOLS_VERSION}; \
+    \
+    # apply errno patch
+    curl -L https://aur.archlinux.org/cgit/aur.git/plain/daemontools-${DAEMONTOOLS_VERSION}.errno.patch?h=daemontools \
+    | patch -Np1; \
+    # compile and install
+    package/install; \
+    cd && rm -rf /package/admin/daemontools-${DAEMONTOOLS_VERSION}/compile; \
+    \
+    # remove prerequisites
+    apk del --no-cache .dt-deps;
 
 # add /command to PATH
 ENV PATH=/command:"${PATH}"
@@ -43,52 +49,49 @@ ENV PATH=/command:"${PATH}"
 # start daemontools
 CMD [ "/command/svscanboot" ]
 
-RUN	\
-	############## \
-	# skalibs (for runwhen) \
-	############## \
-	\
-	# get source \
-	cd "${SLASHPACKAGE}" &&\
-	curl -L http://www.skarnet.org/software/skalibs/skalibs-2.6.4.0.tar.gz \
-	 | tar -xzp &&\
-	cd skalibs-2.6.4.0 &&\
-	\
-	# compile and install \
-	./configure --disable-ipv6 &&\
-	make -j5 && make install &&\
-	cd && rm -rf "${SLASHPACKAGE}"/skalibs-2.6.4.0 &&\
-	\
-	# add skalibs library path \
-	echo "/usr/lib/skalibs" > /etc/ld.so.conf.d/skalibs-x86_64.conf &&\
-	ldconfig &&\
-	\
-	############## \
-	# runwhen \
-	############## \
-	\
-	# prerequisites \
-	yum install -y \
-		bzip2 \
-	&& yum clean all &&\
-	\
-	# get source \
-	cd "${SLASHPACKAGE}" &&\
-	curl -L http://code.dogmap.org/runwhen/releases/runwhen-2015.02.24.tar.bz2 \
-	 | tar -xjp &&\
-	cd "${SLASHPACKAGE}"/admin/runwhen-2015.02.24 &&\
-	\
-	# compile and install \
-	./package/install &&\
-	cd && rm -rf "${SLASHPACKAGE}"/admin/runwhen-2015.02.24/compile
+ARG SKALIBS_VERSION=2.10.0.3
+ARG RUNWHEN_VERSION=2021.04.30
 
-RUN	\
-	############## \
-	# readlog script needs less \
-	############## \
-	yum install -y \
-		less \
-	&& yum clean all
+RUN	set -ex; \
+    #######################
+    # skalibs (for runwhen)
+    #######################
+    \
+    # prerequisites
+    apk --no-cache --virtual .rw-deps add \
+    curl \
+    gcc \
+    make \
+    musl-dev \
+    ; \
+    \
+    # get source
+    cd /package; \
+    curl -L http://www.skarnet.org/software/skalibs/skalibs-${SKALIBS_VERSION}.tar.gz \
+    | tar -xzp; \
+    cd skalibs-${SKALIBS_VERSION}; \
+    \
+    # compile and install
+    ./configure --disable-ipv6; \
+    make -j5 && make install; \
+    cd && rm -rf /package/skalibs-${SKALIBS_VERSION}; \
+    \
+    #########
+    # runwhen
+    #########
+    \
+    # get source 
+    cd /package; \
+    curl -L https://code.dogmap.org/runwhen/releases/runwhen-${RUNWHEN_VERSION}.tar.bz2 \
+    | tar -xjp; \
+    cd /package/admin/runwhen-${RUNWHEN_VERSION}; \
+    \
+    # compile and install
+    ./package/install; \
+    cd && rm -rf /package/admin/runwhen-${RUNWHEN_VERSION}/compile; \
+    \
+    # prerequisites 
+    apk del --no-cache .rw-deps;
 
 # add my readlog script
 COPY readlog /command
