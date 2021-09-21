@@ -9,7 +9,7 @@ steps:
   - name: dockersock
     path: /var/run/docker.sock
   commands:
-  - docker ps -a
+  - docker build --pull --tag ldericher/dtools:latest .
 
 volumes:
 - name: dockersock
