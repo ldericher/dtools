@@ -2,15 +2,18 @@
 FROM alpine:3.14
 LABEL maintainer="jmm@yavook.de"
 
-ENV SLASHPACKAGE="/package"
+ARG SLASHPACKAGE_REAL="/usr/local/package"
 
 RUN	set -ex; \
     ############## 
     # slashpackage 
     ############## 
     \
-    mkdir -p "${SLASHPACKAGE}"; \
-    chmod 1755 "${SLASHPACKAGE}";
+    mkdir -p "${SLASHPACKAGE_REAL}"; \
+    ln -s /usr/local/package /; \
+    chmod +t /package/.;
+
+ARG DAEMONTOOLS_VERSION=0.76
 
 RUN	set -ex; \
     #############
@@ -27,17 +30,17 @@ RUN	set -ex; \
     ; \
     \
     # get source 
-    cd "${SLASHPACKAGE}"; \
-    curl -L https://cr.yp.to/daemontools/daemontools-0.76.tar.gz \
+    cd /package; \
+    curl -L https://cr.yp.to/daemontools/daemontools-${DAEMONTOOLS_VERSION}.tar.gz \
     | tar -xzp; \
-    cd admin/daemontools-0.76; \
+    cd admin/daemontools-${DAEMONTOOLS_VERSION}; \
     \
     # apply errno patch
-    curl -L https://aur.archlinux.org/cgit/aur.git/plain/daemontools-0.76.errno.patch?h=daemontools \
+    curl -L https://aur.archlinux.org/cgit/aur.git/plain/daemontools-${DAEMONTOOLS_VERSION}.errno.patch?h=daemontools \
     | patch -Np1; \
     # compile and install
-    ./package/install; \
-    cd && rm -rf "${SLASHPACKAGE}"/admin/daemontools-0.76/compile; \
+    package/install; \
+    cd && rm -rf /package/admin/daemontools-${DAEMONTOOLS_VERSION}/compile; \
     \
     # remove prerequisites
     apk del --no-cache .dt-deps;
@@ -65,7 +68,7 @@ RUN	set -ex; \
     ; \
     \
     # get source
-    cd "${SLASHPACKAGE}"; \
+    cd /package; \
     curl -L http://www.skarnet.org/software/skalibs/skalibs-${SKALIBS_VERSION}.tar.gz \
     | tar -xzp; \
     cd skalibs-${SKALIBS_VERSION}; \
@@ -73,21 +76,21 @@ RUN	set -ex; \
     # compile and install
     ./configure --disable-ipv6; \
     make -j5 && make install; \
-    cd && rm -rf "${SLASHPACKAGE}"/skalibs-${SKALIBS_VERSION}; \
+    cd && rm -rf /package/skalibs-${SKALIBS_VERSION}; \
     \
     #########
     # runwhen
     #########
     \
     # get source 
-    cd "${SLASHPACKAGE}"; \
+    cd /package; \
     curl -L https://code.dogmap.org/runwhen/releases/runwhen-${RUNWHEN_VERSION}.tar.bz2 \
     | tar -xjp; \
-    cd "${SLASHPACKAGE}"/admin/runwhen-${RUNWHEN_VERSION}; \
+    cd /package/admin/runwhen-${RUNWHEN_VERSION}; \
     \
     # compile and install
     ./package/install; \
-    cd && rm -rf "${SLASHPACKAGE}"/admin/runwhen-${RUNWHEN_VERSION}/compile; \
+    cd && rm -rf /package/admin/runwhen-${RUNWHEN_VERSION}/compile; \
     \
     # prerequisites 
     apk del --no-cache .rw-deps;
