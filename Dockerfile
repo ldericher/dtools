@@ -2,14 +2,12 @@
 FROM alpine:3.13
 LABEL maintainer="jmm@yavook.de"
 
-ARG SLASHPACKAGE_REAL="/usr/local/package"
-
 RUN	set -ex; \
     ############## 
     # slashpackage 
     ############## 
     \
-    mkdir -p "${SLASHPACKAGE_REAL}"; \
+    mkdir -p /usr/local/package; \
     ln -s /usr/local/package /; \
     chmod +t /package/.;
 

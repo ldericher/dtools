@@ -9,3 +9,7 @@ steps:
     repo: ldericher/dtools
     tags:
       - edge
+    username:
+      from_secret: DOCKER_USERNAME
+    password:
+      from_secret: DOCKER_PASSWORD
