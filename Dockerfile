@@ -73,7 +73,7 @@ RUN	set -ex; \
     \
     # compile and install
     ./configure --disable-ipv6; \
-    make -j5 && make install; \
+    make -j$(nproc) && make install; \
     cd && rm -rf /package/skalibs-${SKALIBS_VERSION}; \
     \
     #########
@@ -93,5 +93,5 @@ RUN	set -ex; \
     # prerequisites 
     apk del --no-cache .rw-deps;
 
-# add my readlog script
-COPY readlog /command
+# add readlog script
+COPY readlog /usr/local/bin
