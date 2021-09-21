@@ -1,5 +1,5 @@
 # METADATA
-FROM alpine:3.14
+FROM alpine:3.13
 LABEL maintainer="jmm@yavook.de"
 
 ARG SLASHPACKAGE_REAL="/usr/local/package"
