@@ -1,5 +1,7 @@
 # dtools
 
+[![Build Status](https://github.drone.yavook.de/api/badges/ldericher/dtools/status.svg)](https://github.drone.yavook.de/ldericher/dtools)
+
 Minimal docker enabled [daemontools](https://cr.yp.to/daemontools.html) using centos image
 
 ## Quick start
@@ -8,9 +10,7 @@ Minimal docker enabled [daemontools](https://cr.yp.to/daemontools.html) using ce
 
 Services go to `/service` in the container.
 
-You may want to look at the `test` tag and directory for a simple program run using daemontools:
-
-    docker run -d --name daemontools ldericher/dtools:test
+You may want to look at the directory for a simple program run using daemontools.
 
 ## readlog script
 
