@@ -3,9 +3,9 @@ FROM alpine:3.13
 LABEL maintainer="jmm@yavook.de"
 
 RUN	set -ex; \
-    ############## 
-    # slashpackage 
-    ############## 
+    ##############
+    # slashpackage
+    ##############
     \
     mkdir -p /usr/local/package; \
     ln -s /usr/local/package /; \
@@ -15,7 +15,7 @@ ARG DAEMONTOOLS_VERSION=0.76
 
 RUN	set -ex; \
     #############
-    # daemontools 
+    # daemontools
     #############
     \
     # prerequisites
@@ -27,7 +27,7 @@ RUN	set -ex; \
     patch \
     ; \
     \
-    # get source 
+    # get source
     cd /package; \
     curl -L https://cr.yp.to/daemontools/daemontools-${DAEMONTOOLS_VERSION}.tar.gz \
     | tar -xzp; \
@@ -80,7 +80,7 @@ RUN	set -ex; \
     # runwhen
     #########
     \
-    # get source 
+    # get source
     cd /package; \
     curl -L https://code.dogmap.org/runwhen/releases/runwhen-${RUNWHEN_VERSION}.tar.bz2 \
     | tar -xjp; \
@@ -90,7 +90,7 @@ RUN	set -ex; \
     ./package/install; \
     cd && rm -rf /package/admin/runwhen-${RUNWHEN_VERSION}/compile; \
     \
-    # prerequisites 
+    # prerequisites
     apk del --no-cache .rw-deps;
 
 # add readlog script
