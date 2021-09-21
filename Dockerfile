@@ -20,7 +20,6 @@ RUN	set -ex; \
     \
     # prerequisites
     apk --no-cache --virtual .dt-deps add \
-    curl \
     gcc \
     make \
     musl-dev \
@@ -28,20 +27,20 @@ RUN	set -ex; \
     ; \
     \
     # get source
-    cd /package; \
-    curl -L https://cr.yp.to/daemontools/daemontools-${DAEMONTOOLS_VERSION}.tar.gz \
+    cd "/package"; \
+    wget -qO - "https://cr.yp.to/daemontools/daemontools-${DAEMONTOOLS_VERSION}.tar.gz" \
     | tar -xzp; \
-    cd admin/daemontools-${DAEMONTOOLS_VERSION}; \
-    \
     # apply errno patch
-    curl -L https://aur.archlinux.org/cgit/aur.git/plain/daemontools-${DAEMONTOOLS_VERSION}.errno.patch?h=daemontools \
+    cd "admin/daemontools-${DAEMONTOOLS_VERSION}"; \
+    wget -qO - "https://aur.archlinux.org/cgit/aur.git/plain/daemontools-${DAEMONTOOLS_VERSION}.errno.patch?h=daemontools" \
     | patch -Np1; \
+    \
     # compile and install
-    package/install; \
-    cd && rm -rf /package/admin/daemontools-${DAEMONTOOLS_VERSION}/compile; \
+    "package/install"; \
+    rm -rf "compile"; \
     \
     # remove prerequisites
-    apk del --no-cache .dt-deps;
+    apk --no-cache del .dt-deps;
 
 # add /command to PATH
 ENV PATH=/command:"${PATH}"
@@ -59,39 +58,39 @@ RUN	set -ex; \
     \
     # prerequisites
     apk --no-cache --virtual .rw-deps add \
-    curl \
     gcc \
     make \
     musl-dev \
     ; \
     \
     # get source
-    cd /package; \
-    curl -L http://www.skarnet.org/software/skalibs/skalibs-${SKALIBS_VERSION}.tar.gz \
+    cd "/tmp"; \
+    wget -qO - "http://www.skarnet.org/software/skalibs/skalibs-${SKALIBS_VERSION}.tar.gz" \
     | tar -xzp; \
-    cd skalibs-${SKALIBS_VERSION}; \
     \
     # compile and install
-    ./configure --disable-ipv6; \
-    make -j$(nproc) && make install; \
-    cd && rm -rf /package/skalibs-${SKALIBS_VERSION}; \
+    cd "skalibs-${SKALIBS_VERSION}"; \
+    "./configure" --disable-ipv6; \
+    make -j "$(( $(nproc) * 2 ))"; \
+    make install; \
+    cd; rm -rf "/tmp/skalibs-${SKALIBS_VERSION}"; \
     \
     #########
     # runwhen
     #########
     \
     # get source
-    cd /package; \
-    curl -L https://code.dogmap.org/runwhen/releases/runwhen-${RUNWHEN_VERSION}.tar.bz2 \
+    cd "/package"; \
+    wget -qO - "https://code.dogmap.org/runwhen/releases/runwhen-${RUNWHEN_VERSION}.tar.bz2" \
     | tar -xjp; \
-    cd /package/admin/runwhen-${RUNWHEN_VERSION}; \
     \
     # compile and install
-    ./package/install; \
-    cd && rm -rf /package/admin/runwhen-${RUNWHEN_VERSION}/compile; \
+    cd "admin/runwhen-${RUNWHEN_VERSION}"; \
+    "package/install"; \
+    rm -rf "compile"; \
     \
     # prerequisites
-    apk del --no-cache .rw-deps;
+    apk --no-cache del .rw-deps;
 
 # add readlog script
 COPY readlog /usr/local/bin
